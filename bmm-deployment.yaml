@@ -1,0 +1,60 @@
+# Generation of Kubernetes YAML is still under development!
+#
+# Save the output of this file and use kubectl create -f to import
+# it into Kubernetes.
+#
+# Created with podman-3.2.1
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2021-10-29T20:16:05Z"
+  labels:
+    app: bmm-deployment
+  name: bmm-deployment
+spec:
+  containers:
+  - name: bmm-container
+    image: docker.io/hoall/bmm:latest
+    ports:
+      - containerPort: 8080
+        hostPort: 8080
+        protocol: TCP
+    env:
+      - name: spring.datasource.password
+        value: mysecretpw
+      - name: spring.datasource.url
+        value: jdbc:mariadb://localhost:3306/bmmdb
+      - name: spring.datasource.username
+        value: root
+        #bmmuser
+      - name: spring.jpa.hibernate.ddl-auto
+        value: update
+        # create-drop
+      - name: spring.datasource.driver-class-name
+        value: org.mariadb.jdbc.Driver
+    resources: {}
+    securityContext:
+      allowPrivilegeEscalation: true
+      privileged: false
+      readOnlyRootFilesystem: false
+      seLinuxOptions: {}
+    workingDir: /
+  - name: mariadb-container
+    image: docker.io/library/mariadb:10.6-focal
+    env:
+      - name: MARIADB_ROOT_PASSWORD
+        value: mysecretpw
+      - name: MARIADB_DATABASE
+        value: bmmdb
+      - name: MARIADB_USER
+        value: bmmuser
+      - name: MARIADB_PASSWORD
+        value: anothersecretpw
+    resources: {}
+    securityContext:
+      allowPrivilegeEscalation: true
+      privileged: false
+      readOnlyRootFilesystem: false
+      seLinuxOptions: {}
+    workingDir: /
+status: {}
